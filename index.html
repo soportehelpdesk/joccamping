@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ruta Circular Bronchales 🌲⛺</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #047857;
+            --bg-light-top: #38bdf8;
+            --bg-light-bottom: #bae6fd;
+            --bg-dark-top: #0f172a;
+            --bg-dark-bottom: #312e81;
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --text: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        html, body {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000;
+        }
+
+        #viewport {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            height: 100dvh;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, var(--bg-light-top), var(--bg-light-bottom));
+            overflow: hidden;
+            transition: background 1.5s ease;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        #viewport.night {
+            background: linear-gradient(to bottom, var(--bg-dark-top), var(--bg-dark-bottom));
+        }
+
+        /* ESTRELLES PER A LA NIT */
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            width: 2px;
+            height: 2px;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+        .night .star {
+            opacity: 0.8;
+            animation: twinkle 2s infinite alternate;
+        }
+        @keyframes twinkle { from { opacity: 0.2; } to { opacity: 1; } }
+
+        /* MUNTANYES I VALL DE BRONCHALES */
+        .mountain-bg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60%;
+            background: #1e3a8a;
+            clip-path: polygon(0% 25%, 35% 55%, 50% 65%, 65% 55%, 100% 25%, 100% 100%, 0% 100%);
+            z-index: 1;
+            opacity: 0.4;
+        }
+
+        .mountain-main {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 55%;
+            background: #14532d;
+            clip-path: polygon(0% 100%, 8% 25%, 35% 58%, 50% 68%, 65% 58%, 92% 25%, 100% 100%);
+            z-index: 2;
+        }
+
+        /* TRAJECTÒRIA DEL CAMÍ CIRCULAR */
+        .trail {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 55%;
+            border-top: 5px dashed rgba(255,255,255,0.7);
+            clip-path: polygon(88% 25%, 65% 58%, 50% 68%, 35% 58%, 12% 25%, 10% 25%, 33% 60%, 50% 70%, 67% 60%, 90% 25%);
+            z-index: 3;
+        }
+
+        /* FITES VISUALS EN EL CAMÍ */
+        .milestone-marker {
+            position: absolute;
+            z-index: 3;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .milestone-dot {
+            width: clamp(10px, 3vw, 14px);
+            height: clamp(10px, 3vw, 14px);
+            background: var(--primary);
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+        }
+
+        .milestone-label {
+            background: rgba(15, 23, 42, 0.85);
+            color: #fff;
+            font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .summit-icon {
+            font-size: clamp(1.8rem, 6vw, 2.4rem);
+            margin-bottom: -5px;
+        }
+
+        /* SILUETA DE JORGE AMB FOTO DE LA CARA */
+        #runner-container {
+            position: absolute;
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+        }
+
+        /* FOTO DE JORGE EN LA CAPÇALERA DEL NINOT */
+        .jorge-head {
+            width: clamp(42px, 11vw, 50px);
+            height: clamp(42px, 11vw, 50px);
+            border-radius: 50%;
+            border: 2px solid #fff;
+            background-image: url('tu.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            z-index: 5;
+            background-color: #cbd5e1; /* Color de seguretat si no carrossa la foto */
+        }
+
+        .stick-body {
+            position: relative;
+            width: 3px;
+            height: 22px;
+            background: #fff;
+            margin-top: -2px;
+            border-radius: 2px;
+        }
+
+        .stick-body::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: -7px;
+            width: 17px;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            transform: rotate(-15deg);
+        }
+
+        .leg {
+            position: absolute;
+            bottom: -13px;
+            width: 3px;
+            height: 15px;
+            background: #fff;
+            border-radius: 2px;
+            transform-origin: top center;
+        }
+        .leg-left { left: -3px; transform: rotate(25deg); }
+        .leg-right { right: -3px; transform: rotate(-25deg); }
+
+        .running .leg-left { animation: run-leg-1 0.15s infinite alternate linear; }
+        .running .leg-right { animation: run-leg-2 0.15s infinite alternate linear; }
+        .running { animation: body-bob 0.15s infinite alternate linear; }
+
+        @keyframes run-leg-1 { from { transform: rotate(45deg); } to { transform: rotate(-35deg); } }
+        @keyframes run-leg-2 { from { transform: rotate(-35deg); } to { transform: rotate(45deg); } }
+        @keyframes body-bob { from { transform: translate(-50%, -50%) translateY(-2px); } to { transform: translate(-50%, -50%) translateY(2px); } }
+
+        /* TARGETES CENTRADES */
+        .card-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .level-card {
+            display: none;
+            width: 100%;
+            max-width: 380px;
+            background: var(--card-bg);
+            padding: 22px 18px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 2px solid var(--primary);
+            text-align: center;
+            pointer-events: auto;
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .card-title {
+            font-size: clamp(0.8rem, 3.5vw, 0.95rem);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary-dark);
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: clamp(0.95rem, 4vw, 1.05rem);
+            line-height: 1.45;
+            color: var(--text);
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
+
+        .btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+            font-weight: 700;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active {
+            transform: scale(0.97);
+            background: var(--primary-dark);
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            text-decoration: none;
+            display: block;
+        }
+
+        #click-zone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #tap-instruction {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: clamp(0.75rem, 3vw, 0.85rem);
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 6;
+            white-space: nowrap;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="viewport">
+        <div id="stars-group"></div>
+
+        <div class="mountain-bg"></div>
+        <div class="mountain-main"></div>
+        <div class="trail"></div>
+        
+        <!-- FITES REORGANITZADES EN LA RUTA -->
+        <div class="milestone-marker" style="left: 85%; top: 40%;">
+            <div class="milestone-label">🚪 Eixida Càmping (1.727m)</div>
+            <div class="milestone-dot"></div>
+        </div>
+
+        <div class="milestone-marker" style="left: 50%; top: 62%;">
+            <div class="milestone-label">🏡 El Poble</div>
+            <div class="milestone-dot"></div>
+        </div>
+
+        <div class="milestone-marker" style="left: 22%; top: 48%;">
+            <div class="milestone-label">🧙‍♀️ Bosc Brigita</div>
+            <div class="milestone-dot"></div>
+        </div>
+
+        <div class="milestone-marker" style="left: 12%; top: 38%;">
+            <div class="summit-icon">⛺</div>
+            <div class="milestone-label">🏕️ Retorn Càmping</div>
+        </div>
+
+        <!-- PERSONATGE DE JORGE AMB FOTO -->
+        <div id="runner-container">
+            <div class="jorge-head"></div>
+            <div class="stick-body">
+                <div class="leg leg-left"></div>
+                <div class="leg leg-right"></div>
+            </div>
+        </div>
+
+        <div id="click-zone" onclick="handleTap()"></div>
+        <div id="tap-instruction">Toca per a recórrer la ruta! 🌲</div>
+
+        <div class="card-container">
+            
+            <!-- Parada 1: Eixida Càmping -->
+            <div id="card-0" class="level-card">
+                <div class="card-title">🚪 Eixida del Càmping - Las Corralizas (1.727m)</div>
+                <div class="card-text">"Hola, Jorgito! Bueno, primer de tot dir-te que m'ho he passat molt bé aquest cap de setmana amb tu. Era la primera vegada que passàvem així més temps junts i la veritat és que he estat molt a gust i em trobe molt còmode amb tu.</div>
+                <button class="btn" onclick="resumeRace(0)">Baixar al poble</button>
+            </div>
+
+            <!-- Parada 2: El poble -->
+            <div id="card-1" class="level-card">
+                <div class="card-title">🏡 El Poble de Bronchales</div>
+                <div class="card-text">"Ja saps que eixe puntet intel·lectual em fa riure i també he de dir que em posa calent, jaja. No vull que penses que et dic les coses per a quedar bé o per fer-te un "cumplit". Quan et dic alguna cosa com ara el bé que em beses o coses semblants és perquè així ho pense. Alhora que també et dic que eres un poc sosset quan vols per missatge, que fins i tot hi ha vegades que sembla que estiga parlant sol, jaja.</div>
+                <button class="btn" onclick="resumeRace(1)">Endinsar-se al bosc</button>
+            </div>
+
+            <!-- Parada 3: Bosc de la Bruixa Brigita -->
+            <div id="card-2" class="level-card">
+                <div class="card-title">🧙‍♀️ El Bosc Encantat de Brigita</div>
+                <div class="card-text">"Ací al bosc, et puc dir coses més marranes, jeje. No et fas una idea de com em vas fer disfrutar el divendres per la nit; ho pense i se'm posa dura sols de pensar-ho i, bueno, el dissabte per la nit també vaig disfrutar moltíssim. Tenint en compte la limitació que teníem, ho he passat molt bé i espere que tu també. Que sàpies que tinc moltes ganes de tindre dins el trabuc i notar-lo fins al melic, i també tinc ganes de follar-te jo i que disfrutes tot el que em fas disfrutar a mi.""</div>
+                <button class="btn" onclick="resumeRace(2)">Arribar al Càmping</button>
+            </div>
+
+            <!-- Parada 4: Tornada al Càmping -->
+            <div id="card-3" class="level-card">
+                <div class="card-title">🏕️ Tornada al Càmping (1.727m)</div>
+                <div class="card-text">"Ruta circular completada! Ja hem tornat als 1.727m d'alçada. Entrem cap a la tenda de campanya..."</div>
+                <button class="btn" onclick="resumeRace(3)">Entrar a la tenda ⛺</button>
+            </div>
+
+            <!-- Parada 5 (Final): La Tenda & Eclipsi Solar -->
+            <div id="card-4" class="level-card">
+                <div class="card-title">🌑 PROPOSTA DE PLAN : ECLIPSI SOLAR! ⛺</div>
+                <div class="card-text">"Em vaig quedar pensant sobre l'eclipsi solar del dia 12 d'agost, i bueno, no sé si tens pla ja per a aquest dia, però si no, he pensat en dos llocs als quals podem anar a veure'l i estan propet de Castelló, que supose que l'endemà treballes. I bueno, com li he agafat gustet a açò de proposar-te les coses així, no podia ser menys original, jajaja.". </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Trajectòria circular equilibrada
+        const route = [
+            { left: 85, top: 40 }, // 0: Eixida Càmping (Dalt dreta)
+            { left: 68, top: 52 }, 
+            { left: 50, top: 62 }, // 2: Poble (Baix)
+            { left: 34, top: 55 },
+            { left: 22, top: 48 }, // 4: Bosc Brigita (Pujant)
+            { left: 12, top: 38 }  // 5: Càmping / Tenda Final
+        ];
+
+        const milestones = [2, 5, 8, 11, 14]; 
+
+        let currentStep = 0;
+        let activeLevel = 0;
+        let isRunningAllowed = true;
+        let stopRunnerTimeout;
+
+        const runnerContainer = document.getElementById('runner-container');
+        const viewport = document.getElementById('viewport');
+        const instruction = document.getElementById('tap-instruction');
+
+        // Generar estrelles per a la nit
+        const starsGroup = document.getElementById('stars-group');
+        for (let i = 0; i < 40; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.top = Math.random() * 45 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsGroup.appendChild(star);
+        }
+
+        updateRunnerPosition(0);
+
+        function handleTap() {
+            if (!isRunningAllowed || activeLevel >= milestones.length) return;
+
+            currentStep++;
+
+            if (currentStep === 1) {
+                instruction.style.display = 'none';
+            }
+
+            const totalPositions = route.length - 1;
+            const progress = currentStep / milestones[milestones.length - 1]; 
+            const routeIndex = Math.min(Math.floor(progress * totalPositions), totalPositions - 1);
+            
+            runnerContainer.classList.add('running');
+            clearTimeout(stopRunnerTimeout);
+            stopRunnerTimeout = setTimeout(() => runnerContainer.classList.remove('running'), 200);
+
+            const segmentProgress = (progress * totalPositions) - routeIndex;
+            
+            const startL = route[routeIndex].left;
+            const endL = route[routeIndex + 1].left;
+            const startT = route[routeIndex].top;
+            const endT = route[routeIndex + 1].top;
+
+            const currentLeft = startL + (endL - startL) * segmentProgress;
+            const currentTop = startT + (endT - startT) * segmentProgress;
+
+            runnerContainer.style.left = `${currentLeft}%`;
+            runnerContainer.style.top = `${currentTop}%`;
+
+            if (currentStep >= milestones[activeLevel]) {
+                triggerMilestone(activeLevel);
+            }
+        }
+
+        function updateRunnerPosition(index) {
+            const pos = route[Math.min(index, route.length - 1)];
+            runnerContainer.style.left = `${pos.left}%`;
+            runnerContainer.style.top = `${pos.top}%`;
+        }
+
+        function triggerMilestone(level) {
+            isRunningAllowed = false;
+            document.getElementById(`card-${level}`).style.display = 'block';
+
+            if (level >= 2) {
+                viewport.classList.add('night');
+            }
+        }
+
+        function resumeRace(level) {
+            document.getElementById(`card-${level}`).style.display = 'none';
+            activeLevel++;
+            isRunningAllowed = true;
+            
+            updateRunnerPosition(level + 1);
+        }
+    </script>
+</body>
+</html>
