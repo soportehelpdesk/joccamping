@@ -48,6 +48,24 @@
             background: linear-gradient(to bottom, var(--bg-dark-top), var(--bg-dark-bottom));
         }
 
+        /* CAPA DE FUNDIT PER A ENTRAR A LA TENDA (SENSE DESCUADRES) */
+        #tent-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #090d16;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 8;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #tent-overlay.active {
+            opacity: 0.95;
+        }
+
         /* ESTRELLES PER A LA NIT */
         .star {
             position: absolute;
@@ -147,7 +165,13 @@
             pointer-events: none;
         }
 
-        /* FOTO DE JORGE EN LA CAPÇALERA DEL NINOT */
+        /* Animació de colar-se a la tenda */
+        #runner-container.entering-tent-anim {
+            transform: translate(-50%, -50%) scale(0) rotate(180deg);
+            opacity: 0;
+            transition: all 0.7s ease-in-out;
+        }
+
         .jorge-head {
             width: clamp(42px, 11vw, 50px);
             height: clamp(42px, 11vw, 50px);
@@ -159,7 +183,7 @@
             background-repeat: no-repeat;
             box-shadow: 0 4px 8px rgba(0,0,0,0.4);
             z-index: 5;
-            background-color: #cbd5e1; /* Color de seguretat si no carrossa la foto */
+            background-color: #cbd5e1;
         }
 
         .stick-body {
@@ -272,13 +296,6 @@
             background: var(--primary-dark);
         }
 
-        .btn-whatsapp {
-            background: #25D366;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-            text-decoration: none;
-            display: block;
-        }
-
         #click-zone {
             position: absolute;
             top: 0;
@@ -312,6 +329,7 @@
 
     <div id="viewport">
         <div id="stars-group"></div>
+        <div id="tent-overlay"></div>
 
         <div class="mountain-bg"></div>
         <div class="mountain-main"></div>
@@ -324,12 +342,12 @@
         </div>
 
         <div class="milestone-marker" style="left: 50%; top: 62%;">
-            <div class="milestone-label">🏡 El Poble</div>
+            <div class="milestone-label">🏡 Bronchales</div>
             <div class="milestone-dot"></div>
         </div>
 
         <div class="milestone-marker" style="left: 22%; top: 48%;">
-            <div class="milestone-label">🧙‍♀️ Bosc Brigita</div>
+            <div class="milestone-label">🧙‍♀️ Bosc Brigitta</div>
             <div class="milestone-dot"></div>
         </div>
 
@@ -361,7 +379,7 @@
 
             <!-- Parada 2: El poble -->
             <div id="card-1" class="level-card">
-                <div class="card-title">🏡 El Poble de Bronchales</div>
+                <div class="card-title">🏡 Bronchales</div>
                 <div class="card-text">"Ja saps que eixe puntet intel·lectual em fa riure i també he de dir que em posa calent, jaja. No vull que penses que et dic les coses per a quedar bé o per fer-te un "cumplit". Quan et dic alguna cosa com ara el bé que em beses o coses semblants és perquè així ho pense. Alhora que també et dic que eres un poc sosset quan vols per missatge, que fins i tot hi ha vegades que sembla que estiga parlant sol, jaja.</div>
                 <button class="btn" onclick="resumeRace(1)">Endinsar-se al bosc</button>
             </div>
@@ -369,7 +387,7 @@
             <!-- Parada 3: Bosc de la Bruixa Brigita -->
             <div id="card-2" class="level-card">
                 <div class="card-title">🧙‍♀️ El Bosc Encantat de Brigita</div>
-                <div class="card-text">"Ací al bosc, et puc dir coses més marranes, jeje. No et fas una idea de com em vas fer disfrutar el divendres per la nit; ho pense i se'm posa dura sols de pensar-ho i, bueno, el dissabte per la nit també vaig disfrutar moltíssim. Tenint en compte la limitació que teníem, ho he passat molt bé i espere que tu també. Que sàpies que tinc moltes ganes de tindre dins el trabuc i notar-lo fins al melic, i també tinc ganes de follar-te jo i que disfrutes tot el que em fas disfrutar a mi.""</div>
+                <div class="card-text">"Ací al bosc, et puc dir coses més marranes, jeje. No et fas una idea de com em vas fer disfrutar el divendres per la nit; ho pense i se'm posa dura sols de pensar-ho i, bueno, el dissabte per la nit també vaig disfrutar moltíssim. Tenint en compte la limitació que teníem, ho he passat molt bé i espere que tu també. Que sàpigues que tinc moltes ganes de tindre dins el trabuc i notar-lo fins al melic, i també tinc ganes de follar-te jo i que disfrutes tot el que em fas disfrutar a mi."</div>
                 <button class="btn" onclick="resumeRace(2)">Arribar al Càmping</button>
             </div>
 
@@ -377,13 +395,13 @@
             <div id="card-3" class="level-card">
                 <div class="card-title">🏕️ Tornada al Càmping (1.727m)</div>
                 <div class="card-text">"Ruta circular completada! Ja hem tornat als 1.727m d'alçada. Entrem cap a la tenda de campanya..."</div>
-                <button class="btn" onclick="resumeRace(3)">Entrar a la tenda ⛺</button>
+                <button class="btn" onclick="enterTentAnimation()">Entrar a la tenda ⛺</button>
             </div>
 
             <!-- Parada 5 (Final): La Tenda & Eclipsi Solar -->
             <div id="card-4" class="level-card">
                 <div class="card-title">🌑 PROPOSTA DE PLAN : ECLIPSI SOLAR! ⛺</div>
-                <div class="card-text">"Em vaig quedar pensant sobre l'eclipsi solar del dia 12 d'agost, i bueno, no sé si tens pla ja per a aquest dia, però si no, he pensat en dos llocs als quals podem anar a veure'l i estan propet de Castelló, que supose que l'endemà treballes. I bueno, com li he agafat gustet a açò de proposar-te les coses així, no podia ser menys original, jajaja.". </div>
+                <div class="card-text">"Em vaig quedar pensant sobre l'eclipsi solar del dia 12 d'agost, i bueno, no sé si tens pla ja per a aquest dia, però si no, he pensat en dos llocs als quals podem anar a veure'l i estan propet de Castelló, que supose que l'endemà treballes. I bueno, com li he agafat gustet a açò de proposar-te les coses així, no podia ser menys original, jajaja."</div>
             </div>
 
         </div>
@@ -400,7 +418,7 @@
             { left: 12, top: 38 }  // 5: Càmping / Tenda Final
         ];
 
-        const milestones = [2, 5, 8, 11, 14]; 
+        const milestones = [2, 5, 8, 11]; 
 
         let currentStep = 0;
         let activeLevel = 0;
@@ -410,6 +428,7 @@
         const runnerContainer = document.getElementById('runner-container');
         const viewport = document.getElementById('viewport');
         const instruction = document.getElementById('tap-instruction');
+        const tentOverlay = document.getElementById('tent-overlay');
 
         // Generar estrelles per a la nit
         const starsGroup = document.getElementById('stars-group');
@@ -480,6 +499,22 @@
             isRunningAllowed = true;
             
             updateRunnerPosition(level + 1);
+        }
+
+        /* ANIMACIÓ NETA SENSE DESCUADRES PER A ENTRAR A LA TENDA */
+        function enterTentAnimation() {
+            document.getElementById('card-3').style.display = 'none';
+            
+            // 1. El ninot fa l'efecte de ficar-se cap a la tenda
+            runnerContainer.classList.add('entering-tent-anim');
+            
+            // 2. Fundit suau a negre (com tancar la cremallera de la tenda)
+            tentOverlay.classList.add('active');
+
+            // 3. Apareix la targeta final centrada i neta
+            setTimeout(() => {
+                document.getElementById('card-4').style.display = 'block';
+            }, 700);
         }
     </script>
 </body>
